@@ -203,29 +203,31 @@ function App() {
 
   const runFinalSequence = () => {
     setInteractionLocked(true);
-    setShowBubble(false);
     setTimeout(() => {
-      setMakeWishVisible(true);
+      setShowBubble(false);
+      setTimeout(() => {
+        setMakeWishVisible(true);
 
-      const countdown = ['3...', '2...', '1...'];
-      let i = 0;
-      const countdownInterval = setInterval(() => {
-        beepAudioRef.current?.play();
-        beepAudioRef.current.currentTime = 0;
-        if (i < countdown.length) {
-          setCountdownText(countdown[i]);
+        const countdown = ['3...', '2...', '1...'];
+        let i = 0;
+        const countdownInterval = setInterval(() => {
+          beepAudioRef.current?.play();
+          beepAudioRef.current.currentTime = 0;
+          if (i < countdown.length) {
+            setCountdownText(countdown[i]);
 
-          i++;
-        } else {
-          clearInterval(countdownInterval);
-          setCountdownText('');
-          setMakeWishVisible(false);
-          beepAudioRef.current?.pause();
-          // Delay 1s to let '1...' breathe before the transformation
-          setTimeout(() => {
-            startDadTransformation();
-          }, 1000);
-        }
+            i++;
+          } else {
+            clearInterval(countdownInterval);
+            setCountdownText('');
+            setMakeWishVisible(false);
+            beepAudioRef.current?.pause();
+            // Delay 1s to let '1...' breathe before the transformation
+            setTimeout(() => {
+              startDadTransformation();
+            }, 1000);
+          }
+        }, 1000);
       }, 1000);
     }, 1500);
   };
