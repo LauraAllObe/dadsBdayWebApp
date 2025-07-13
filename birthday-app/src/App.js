@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 import confetti from 'canvas-confetti';
 import './App.css';
 
@@ -19,7 +18,6 @@ function App() {
   const typingAudioRef = useRef(null);
   const drumrollRef = useRef(null);
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [finalSequence, setFinalSequence] = useState(false);
   const [countdownText, setCountdownText] = useState('');
   const [makeWishVisible, setMakeWishVisible] = useState(false);
   const cheerAudioRef = useRef(null);
@@ -155,7 +153,6 @@ function App() {
     setDisplayedText('');
     setTyping(false);
     setAudioEnabled(false);
-    setFinalSequence(false);
     setCountdownText('');
     setMakeWishVisible(false);
     setShowBubble(true);
@@ -259,14 +256,14 @@ function App() {
   };
 
   return (
-    <div className="App" onClick={handleTap}>
+    <div className="App"  alt="" onClick={handleTap}>
       <img src="/garland.PNG" alt="garland" className="garland" />
       <div className="cake-container">
-        <img src="/table.png" className="table" />
-        <img src={`/${cakeStage}`} className="cake" />
-        <img src="/smoke.png" className="smoke" style={{ display: showSmoke ? 'block' : 'none' }} />
+        <img src="/table.png"  alt="" className="table" />
+        <img src={`/${cakeStage}`}  alt="" className="cake" />
+        <img src="/smoke.png"  alt="" className="smoke" style={{ display: showSmoke ? 'block' : 'none' }} />
       </div>
-      <div className="family-container">
+      <div  alt="" className="family-container">
         <img src="/simsalabim.PNG" id="sim" alt="simsalabim" className="pet-family-member" />
         <img src="/laura.PNG" id="lau" alt="laura" className="family-member" />
         <img src="/selena.PNG" id="sel" alt="selena" className="pet-family-member" />
@@ -276,34 +273,34 @@ function App() {
         <img src="/zoe.PNG" id="zoe" alt="zoe" className="family-member" />
       </div>
 
-      <div className="dad-container">
+      <div  alt="" className="dad-container">
         <img src={`/${dadStage}.PNG`} alt="dad" className="dad" />
         <img src="/hat.PNG" alt="hat" className="hat" />
       </div>
 
-      <canvas id="confetti-canvas"></canvas>
+      <canvas  alt="" id="confetti-canvas"></canvas>
 
       {audioEnabled && (
-        <div className="bubble-container" style={{ display: showBubble ? 'flex' : 'none' }}>
-          <p className="speech-text" ref={textRef}>{displayedText}</p>
+        <div  alt="" className="bubble-container" style={{ display: showBubble ? 'flex' : 'none' }}>
+          <p  alt="" className="speech-text" ref={textRef}>{displayedText}</p>
         </div>
       )}
 
       {makeWishVisible && (
-        <div className="wish-overlay">
-          <h1 className="make-wish-text">MAKE A WISH</h1>
-          <div className="countdown">{countdownText}</div>
+        <div  alt="" className="wish-overlay">
+          <h1  alt="" className="make-wish-text">MAKE A WISH</h1>
+          <div  alt="" className="countdown">{countdownText}</div>
         </div>
       )}
 
       {showBanner && (
-        <div className="birthday-banner">HAPPY BIRTHDAY DAD!!!!!</div>
+        <div  alt="" className="birthday-banner">HAPPY BIRTHDAY DAD!!!!!</div>
       )}
 
-      <audio ref={typingAudioRef} src="/click.wav" preload="auto" />
-      <audio ref={drumrollRef} src="/drumroll.mp3" preload="auto" />
-      <audio ref={cheerAudioRef} src="/cheer.mp3" preload="auto" />
-      <audio ref={beepAudioRef} src="/beep.mp3" preload="auto" />
+      <audio  alt="" ref={typingAudioRef} src="/click.wav" preload="auto" />
+      <audio  alt="" ref={drumrollRef} src="/drumroll.mp3" preload="auto" />
+      <audio  alt="" ref={cheerAudioRef} src="/cheer.mp3" preload="auto" />
+      <audio  alt="" ref={beepAudioRef} src="/beep.mp3" preload="auto" />
 
     </div>
   );
