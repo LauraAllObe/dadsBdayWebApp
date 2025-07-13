@@ -8,8 +8,7 @@ const messages = [
   "This is a very important day...",
   "How come?...",
   "*drum roll*",
-  "Today commemorates the birthday of Ernst Georg Obermaier, the best dad ever!!",
-  "HAPPY BIRTHDAY DAD!!!!!"
+  "Today marks the 60th birthday of Ernst Obermaier, the best dad ever!!",
 ];
 
 function App() {
@@ -20,20 +19,17 @@ function App() {
   const typingAudioRef = useRef(null);
   const drumrollRef = useRef(null);
   const [audioEnabled, setAudioEnabled] = useState(false);
-
-
-  useEffect(() => {
-    // Initial confetti rain
-    confetti({
-      particleCount: 100,
-      spread: 360,
-      origin: { y: 0 },
-      startVelocity: 30,
-      gravity: 0.5,
-    });
-
-    // No typing on load
-  }, []);
+  const [finalSequence, setFinalSequence] = useState(false);
+  const [countdownText, setCountdownText] = useState('');
+  const [makeWishVisible, setMakeWishVisible] = useState(false);
+  const cheerAudioRef = useRef(null);
+  const beepAudioRef = useRef(null);
+  const [showBubble, setShowBubble] = useState(true);
+  const [dadStage, setDadStage] = useState('dad1');
+  const [showSmoke, setShowSmoke] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const [cakeStage, setCakeStage] = useState('cake.GIF');
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
     // Prime the audio element to reduce latency
@@ -68,31 +64,38 @@ function App() {
       if (playAudio) {
         if (!isDrumroll && typingAudioRef.current) {
           typingAudioRef.current.loop = true;
-          typingAudioRef.current.currentTime = 3;
+          typingAudioRef.current.currentTime = 0;
           typingAudioRef.current.play().catch(() => {});
         } else if (isDrumroll && drumrollRef.current) {
-          drumrollRef.current.currentTime = 3;
+          drumrollRef.current.currentTime = 4;
           drumrollRef.current.play().catch(() => {});
         }
       }
-      
-      const interval = setInterval(() => {
-        currentText += message[i];
-        setDisplayedText(currentText);
-        i++;
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          currentText += message[i];
+          setDisplayedText(currentText);
+          i++;
 
-        if (i >= message.length) {
-          clearInterval(interval);
-          setTyping(false);
+          // Modify end of typewriter function:
+          if (i >= message.length) {
+            clearInterval(interval);
+            setTyping(false);
 
-          if (typingAudioRef.current) {
-            typingAudioRef.current.pause();
-            typingAudioRef.current.currentTime = 0;
-            typingAudioRef.current.loop = false;
+            if (typingAudioRef.current) {
+              typingAudioRef.current.pause();
+              typingAudioRef.current.currentTime = 0;
+              typingAudioRef.current.loop = false;
+            }
+
+            // Trigger sequence if it's the last message
+            if (message === messages[messages.length - 1]) {
+              runFinalSequence();
+            }
           }
-        }
-      }, 35);
-    }, 500);
+        }, 35);
+      }, 400);
+    }, 100);
   };
 
   const handleTap = () => {
@@ -103,18 +106,17 @@ function App() {
       if (typingAudioRef.current) {
         typingAudioRef.current.play().then(() => {
           typingAudioRef.current.pause();
-          typingAudioRef.current.currentTime = 0;
+          typingAudioRef.current.currentTime = 3;
         }).catch(() => {});
       }
 
       if (drumrollRef.current) {
         drumrollRef.current.play().then(() => {
           drumrollRef.current.pause();
-          drumrollRef.current.currentTime = 0;
+          drumrollRef.current.currentTime = 2;
         }).catch(() => {});
       }
 
-      // ✅ Instead of relying on audioEnabled (which is stale), explicitly pass true
       typeMessage(messages[0], true);
       return;
     }
@@ -137,11 +139,58 @@ function App() {
       const next = current + 1;
       setCurrent(next);
       typeMessage(messages[next], true); // pass true for audio
-
-      if (next === 4 || next === 5) {
-        triggerConfettiBlast();
-      }
     }
+
+    if (animationComplete) {
+      resetApp();
+      return;
+    }
+  };
+
+  const resetApp = () => {
+    setCurrent(0);
+    setDisplayedText('');
+    setTyping(false);
+    setAudioEnabled(false);
+    setFinalSequence(false);
+    setCountdownText('');
+    setMakeWishVisible(false);
+    setShowBubble(true);
+    setDadStage('dad1');
+    setShowSmoke(false);
+    setShowBanner(false);
+    setCakeStage('cake.GIF');
+    setAnimationComplete(false);
+
+    // Reset audio
+    if (typingAudioRef.current) {
+      typingAudioRef.current.pause();
+      typingAudioRef.current.currentTime = 0;
+    }
+
+    if (drumrollRef.current) {
+      drumrollRef.current.pause();
+      drumrollRef.current.currentTime = 0;
+    }
+
+    if (cheerAudioRef.current) {
+      cheerAudioRef.current.pause();
+      cheerAudioRef.current.currentTime = 0;
+    }
+
+    if (beepAudioRef.current) {
+      beepAudioRef.current.pause();
+      beepAudioRef.current.currentTime = 0;
+    }
+
+    // Optionally, re-trigger confetti or intro effect
+    confetti({
+      particleCount: 100,
+      spread: 360,
+      origin: { y: 0 },
+      startVelocity: 30,
+      gravity: 0.5,
+    });
   };
 
   const triggerConfettiBlast = () => {
@@ -152,11 +201,64 @@ function App() {
     });
   };
 
+  const runFinalSequence = () => {
+    setTimeout(() => {
+      setShowBubble(false);
+    }, 1500);
+    setTimeout(() => {
+      setMakeWishVisible(true);
+
+      const countdown = ['3...', '2...', '1...'];
+      let i = 0;
+      const countdownInterval = setInterval(() => {
+        beepAudioRef.current?.play();
+        beepAudioRef.current.currentTime = 0;
+        if (i < countdown.length) {
+          setCountdownText(countdown[i]);
+
+          i++;
+        } else {
+          clearInterval(countdownInterval);
+          setCountdownText('');
+          setMakeWishVisible(false);
+          beepAudioRef.current?.pause();
+          // Delay 1s to let '1...' breathe before the transformation
+          setTimeout(() => {
+            startDadTransformation();
+          }, 1000);
+        }
+      }, 1000);
+    }, 1000);
+  };
+
+  const startDadTransformation = () => {
+    setDadStage('dad2');
+
+    setTimeout(() => {
+      setDadStage('dad3');
+      setShowSmoke(true);
+      setCakeStage('cakeOut.PNG');
+
+      setTimeout(() => {
+        setDadStage('dad1'); // ← change this
+        setShowSmoke(false);
+
+        triggerConfettiBlast();
+        cheerAudioRef.current?.play().catch(() => {});
+        setShowBanner(true);
+      }, 1500);
+    }, 1000);
+    setShowBanner(true);
+    setAnimationComplete(true);
+  };
+
   return (
     <div className="App" onClick={handleTap}>
       <img src="/garland.PNG" alt="garland" className="garland" />
       <div className="cake-container">
         <img src="/table.png" className="table" />
+        <img src={`/${cakeStage}`} className="cake" />
+        <img src="/smoke.png" className="smoke" style={{ display: showSmoke ? 'block' : 'none' }} />
       </div>
       <div className="family-container">
         <img src="/simsalabim.PNG" id="sim" alt="simsalabim" className="pet-family-member" />
@@ -169,20 +271,34 @@ function App() {
       </div>
 
       <div className="dad-container">
-        <img src="/dad1.PNG" alt="dad" className="dad" />
+        <img src={`/${dadStage}.PNG`} alt="dad" className="dad" />
         <img src="/hat.PNG" alt="hat" className="hat" />
       </div>
 
       <canvas id="confetti-canvas"></canvas>
 
       {audioEnabled && (
-        <div className="bubble-container">
+        <div className="bubble-container" style={{ display: showBubble ? 'flex' : 'none' }}>
           <p className="speech-text" ref={textRef}>{displayedText}</p>
         </div>
       )}
 
+      {makeWishVisible && (
+        <div className="wish-overlay">
+          <h1 className="make-wish-text">MAKE A WISH</h1>
+          <div className="countdown">{countdownText}</div>
+        </div>
+      )}
+
+      {showBanner && (
+        <div className="birthday-banner">HAPPY BIRTHDAY DAD!!!!!</div>
+      )}
+
       <audio ref={typingAudioRef} src="/click.wav" preload="auto" />
       <audio ref={drumrollRef} src="/drumroll.mp3" preload="auto" />
+      <audio ref={cheerAudioRef} src="/cheer.mp3" preload="auto" />
+      <audio ref={beepAudioRef} src="/beep.mp3" preload="auto" />
+
     </div>
   );
 }
