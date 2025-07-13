@@ -108,7 +108,7 @@ function App() {
       cheerAudioRef.current?.pause();
       cheerAudioRef.current.currentTime = 0;
     }).catch(() => {});
-    
+
     if (interactionLocked) return;
     if (animationComplete) {
       resetApp();
@@ -172,7 +172,8 @@ function App() {
     setShowBanner(false);
     setCakeStage('cake.GIF');
     setAnimationComplete(false);
-
+    cheerAudioRef.current.muted = true;
+    beepAudioRef.current.muted = true;
     // Reset audio
     if (typingAudioRef.current) {
       typingAudioRef.current.pause();
@@ -222,6 +223,7 @@ function App() {
         const countdown = ['3...', '2...', '1...'];
         let i = 0;
         const countdownInterval = setInterval(() => {
+          beepAudioRef.current.muted = false;
           if (beepAudioRef.current) {
             beepAudioRef.current.currentTime = 0;
             beepAudioRef.current.play().catch(() => {});
@@ -258,6 +260,7 @@ function App() {
         setShowSmoke(false);
 
         triggerConfettiBlast();
+        cheerAudioRef.current.muted = false;
         cheerAudioRef.current?.play().catch(() => {});
         setShowBanner(true);
 
@@ -314,8 +317,8 @@ function App() {
 
       <audio  alt="" ref={typingAudioRef} src="/click.wav" preload="auto" />
       <audio  alt="" ref={drumrollRef} src="/drumroll.mp3" preload="auto" />
-      <audio  alt="" ref={cheerAudioRef} src="/cheer.mp3" preload="auto" />
-      <audio  alt="" ref={beepAudioRef} src="/beep.mp3" preload="auto" />
+      <audio  alt="" ref={cheerAudioRef} src="/cheer.mp3" preload="auto" muted/>
+      <audio  alt="" ref={beepAudioRef} src="/beep.mp3" preload="auto" muted/>
 
     </div>
   );
