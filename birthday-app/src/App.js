@@ -98,6 +98,17 @@ function App() {
   };
 
   const handleTap = () => {
+    // Pre-warm beep and cheer audio
+    beepAudioRef.current?.play().then(() => {
+      beepAudioRef.current?.pause();
+      beepAudioRef.current.currentTime = 0;
+    }).catch(() => {});
+
+    cheerAudioRef.current?.play().then(() => {
+      cheerAudioRef.current?.pause();
+      cheerAudioRef.current.currentTime = 0;
+    }).catch(() => {});
+    
     if (interactionLocked) return;
     if (animationComplete) {
       resetApp();
@@ -211,8 +222,10 @@ function App() {
         const countdown = ['3...', '2...', '1...'];
         let i = 0;
         const countdownInterval = setInterval(() => {
-          beepAudioRef.current?.play();
-          beepAudioRef.current.currentTime = 0;
+          if (beepAudioRef.current) {
+            beepAudioRef.current.currentTime = 0;
+            beepAudioRef.current.play().catch(() => {});
+          }
           if (i < countdown.length) {
             setCountdownText(countdown[i]);
 
