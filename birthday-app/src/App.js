@@ -8,7 +8,7 @@ const messages = [
   "This is a very important day...",
   "How come?...",
   "*drum roll*",
-  "Today marks the 60th birthday of Ernst Obermaier, the best dad ever!!",
+  "Today marks the 60th birthday of Ernst Obermaier, the best dad ever!!!",
 ];
 
 function App() {
@@ -30,6 +30,7 @@ function App() {
   const [showBanner, setShowBanner] = useState(false);
   const [cakeStage, setCakeStage] = useState('cake.GIF');
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [interactionLocked, setInteractionLocked] = useState(false);
 
   useEffect(() => {
     // Prime the audio element to reduce latency
@@ -99,55 +100,57 @@ function App() {
   };
 
   const handleTap = () => {
-    if (!audioEnabled) {
-      setAudioEnabled(true);
-
-      // Unlock audio
-      if (typingAudioRef.current) {
-        typingAudioRef.current.play().then(() => {
-          typingAudioRef.current.pause();
-          typingAudioRef.current.currentTime = 3;
-        }).catch(() => {});
-      }
-
-      if (drumrollRef.current) {
-        drumrollRef.current.play().then(() => {
-          drumrollRef.current.pause();
-          drumrollRef.current.currentTime = 2;
-        }).catch(() => {});
-      }
-
-      typeMessage(messages[0], true);
-      return;
-    }
-
-    if (typing) return;
-
-    // Stop any audio
-    if (drumrollRef.current) {
-      drumrollRef.current.pause();
-      drumrollRef.current.currentTime = 0;
-    }
-
-    if (typingAudioRef.current) {
-      typingAudioRef.current.pause();
-      typingAudioRef.current.currentTime = 0;
-      typingAudioRef.current.loop = false;
-    }
-
-    if (current < messages.length - 1) {
-      const next = current + 1;
-      setCurrent(next);
-      typeMessage(messages[next], true); // pass true for audio
-    }
-
+    if (interactionLocked) return;
     if (animationComplete) {
       resetApp();
-      return;
+    }
+    else {
+      if (!audioEnabled) {
+        setAudioEnabled(true);
+
+        // Unlock audio
+        if (typingAudioRef.current) {
+          typingAudioRef.current.play().then(() => {
+            typingAudioRef.current.pause();
+            typingAudioRef.current.currentTime = 3;
+          }).catch(() => {});
+        }
+
+        if (drumrollRef.current) {
+          drumrollRef.current.play().then(() => {
+            drumrollRef.current.pause();
+            drumrollRef.current.currentTime = 2;
+          }).catch(() => {});
+        }
+
+        typeMessage(messages[0], true);
+        return;
+      }
+
+      if (typing) return;
+
+      // Stop any audio
+      if (drumrollRef.current) {
+        drumrollRef.current.pause();
+        drumrollRef.current.currentTime = 0;
+      }
+
+      if (typingAudioRef.current) {
+        typingAudioRef.current.pause();
+        typingAudioRef.current.currentTime = 0;
+        typingAudioRef.current.loop = false;
+      }
+
+      if (current < messages.length - 1) {
+        const next = current + 1;
+        setCurrent(next);
+        typeMessage(messages[next], true); // pass true for audio
+      }
     }
   };
 
   const resetApp = () => {
+    setInteractionLocked(false);
     setCurrent(0);
     setDisplayedText('');
     setTyping(false);
@@ -202,6 +205,7 @@ function App() {
   };
 
   const runFinalSequence = () => {
+    setInteractionLocked(true);
     setTimeout(() => {
       setShowBubble(false);
     }, 1500);
@@ -240,16 +244,20 @@ function App() {
       setCakeStage('cakeOut.PNG');
 
       setTimeout(() => {
-        setDadStage('dad1'); // ← change this
+        setDadStage('dad1');
         setShowSmoke(false);
 
         triggerConfettiBlast();
         cheerAudioRef.current?.play().catch(() => {});
         setShowBanner(true);
-      }, 1500);
-    }, 1000);
-    setShowBanner(true);
-    setAnimationComplete(true);
+
+        setTimeout(() => {
+          setAnimationComplete(true);
+          setInteractionLocked(false);
+        }, 2000);
+
+      }, 1500); // After dad3
+    }, 1000); // After dad2
   };
 
   return (
