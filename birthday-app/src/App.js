@@ -206,9 +206,7 @@ function App() {
 
   const runFinalSequence = () => {
     setInteractionLocked(true);
-    setTimeout(() => {
-      setShowBubble(false);
-    }, 1500);
+    setShowBubble(false);
     setTimeout(() => {
       setMakeWishVisible(true);
 
@@ -232,7 +230,7 @@ function App() {
           }, 1000);
         }
       }, 1000);
-    }, 1000);
+    }, 1500);
   };
 
   const startDadTransformation = () => {
